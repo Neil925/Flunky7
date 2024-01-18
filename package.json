@@ -1,0 +1,34 @@
+{
+  "name": "flunky7",
+  "version": "1.0.0",
+  "description": "A custom Discord JS bot for the Seven's Gaming Heaven Discord community.",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --loader ts-node/esm src/index.ts",
+    "test": "nodemon --exec node --loader ts-node/esm src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Neil925/Flunky7.git"
+  },
+  "keywords": [
+    "DiscordJS",
+    "Bot"
+  ],
+  "author": "Neil Elkadi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Neil925/Flunky7/issues"
+  },
+  "homepage": "https://github.com/Neil925/Flunky7#readme",
+  "dependencies": {
+    "discord.js": "^14.14.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "nodemon": "^3.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
