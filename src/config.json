@@ -1,3 +1,43 @@
 {
-    "token": ""
+    "token": "",
+    "interactions": [
+        {
+            "promt": "What is your language?\nJP\nES\nFR",
+            "responses": [
+                {"text": "English", "role": "<en>"},
+                {"text": "Japenese", "role": "<jp>"},
+                {"text": "Spanish", "role": "<es>"},
+                {"text": "French", "role": "<fr>"}
+            ]
+        },
+        {
+            "promt": "What is your language?\nJP\nES\nFR",
+            "responses": [
+                "English",
+                "Japanese",
+                "Spanish",
+                "French"
+            ]
+        },
+        {
+            "promt": "What is your language?\nJP\nES\nFR",
+            "responses": [
+                "English",
+                "Japanese",
+                "Spanish",
+                "French"
+            ]
+        },
+        [
+            {
+                "promt": "What is your language?\nJP\nES\nFR",
+                "responses": [
+                    "English",
+                    "Japanese",
+                    "Spanish",
+                    "French"
+                ]    
+            }
+        ]
+    ]
 }
