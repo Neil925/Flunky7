@@ -1,43 +1,85 @@
 {
     "token": "",
+    "Langauge": {
+        "type": "multi-select",
+        "promt": "Select your languages.\n{Same thing in JP}\n{Same thing in ES}\n{Same thing in FR}",
+        "responses": [
+            {"text": "English", "role": "<en>"},
+            {"text": "{Japenese}", "role": "<jp>"},
+            {"text": "{Spanish}", "role": "<es>"},
+            {"text": "{French}", "role": "<fr>"}
+        ]
+    },
     "interactions": [
         {
-            "promt": "What is your language?\nJP\nES\nFR",
-            "responses": [
-                {"text": "English", "role": "<en>"},
-                {"text": "Japenese", "role": "<jp>"},
-                {"text": "Spanish", "role": "<es>"},
-                {"text": "French", "role": "<fr>"}
-            ]
-        },
-        {
-            "promt": "What is your language?\nJP\nES\nFR",
-            "responses": [
-                "English",
-                "Japanese",
-                "Spanish",
-                "French"
-            ]
-        },
-        {
-            "promt": "What is your language?\nJP\nES\nFR",
-            "responses": [
-                "English",
-                "Japanese",
-                "Spanish",
-                "French"
-            ]
-        },
-        [
-            {
-                "promt": "What is your language?\nJP\nES\nFR",
+            "type": "multi-select",
+            "English": {
+                "promt": "What are your interests?",
                 "responses": [
-                    "English",
-                    "Japanese",
-                    "Spanish",
-                    "French"
-                ]    
+                    {"text": "Gaming", "role": "<game>"},
+                    {"text": "Art", "role": "<art>"},
+                    {"text": "Music", "role": "<music>"},
+                    {"text": "Anime", "role": "<anime>"}
+                ]
+            },
+            "Japanese": {
+                "promt": "",
+                "responses": [
+                    {"text": "", "role": "<game>"},
+                    {"text": "", "role": "<art>"},
+                    {"text": "", "role": "<music>"},
+                    {"text": "", "role": "<anime>"}
+                ]
+            },
+            "Spanish": {
+                "promt": "",
+                "responses": [
+                    {"text": "", "role": "<game>"},
+                    {"text": "", "role": "<art>"},
+                    {"text": "", "role": "<music>"},
+                    {"text": "", "role": "<anime>"}
+                ]
+            },
+            "French": {
+                "promt": "",
+                "responses": [
+                    {"text": "", "role": "<game>"},
+                    {"text": "", "role": "<art>"},
+                    {"text": "", "role": "<music>"},
+                    {"text": "", "role": "<anime>"}
+                ]
             }
-        ]
+        },
+        {
+            "type": "checkbox",
+            "English": {
+                "promt": "{Print of the rules}\nHave you read and accepted the rules?",
+                "responses": [
+                    {"text": "Yes", "role": "<game>"},
+                    {"text": "No", "role": "<SendEmToHell>"}
+                ]
+            },
+            "Japanese": {
+                "promt": "",
+                "responses": [
+                    {"text": "Yes", "role": "<game>"},
+                    {"text": "No", "role": "<SendEmToHell>"}
+                ]
+            },
+            "Spanish": {
+                "promt": "",
+                "responses": [
+                    {"text": "Yes", "role": "<game>"},
+                    {"text": "No", "role": "<SendEmToHell>"}
+                ]
+            },
+            "French": {
+                "promt": "",
+                "responses": [
+                    {"text": "Yes", "role": "<game>"},
+                    {"text": "No", "role": "<SendEmToHell>"}
+                ]
+            }
+        }
     ]
 }
