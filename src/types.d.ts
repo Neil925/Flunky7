@@ -1,6 +1,6 @@
 interface LangaugeConfig {
-    languagePrompt: string;
     interactions: BotInteraction[];
+    selectionPlaceHolder: string;
     rules: string[];
 }
 

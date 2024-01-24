@@ -1,0 +1,30 @@
+{
+    "token": "",
+    "prisonRole": "",
+    "Languages": [
+        {
+            "Name": "English",
+            "ShownAs": "English",
+            "languagePrompt": "<Please select your langauges.>",
+            "RoleID": ""
+        },
+        {
+            "Name": "Japanese",
+            "ShownAs": "日本語",
+            "languagePrompt": "<Please select your langauges.>",
+            "RoleID": ""
+        },
+        {
+            "Name": "Spanish",
+            "ShownAs": "Español",
+            "languagePrompt": "<Please select your langauges.>",
+            "RoleID": ""
+        },
+        {
+            "Name": "French",
+            "ShownAs": "Français",
+            "languagePrompt": "<Please select your langauges.>",
+            "RoleID": ""
+        }
+    ]
+}
