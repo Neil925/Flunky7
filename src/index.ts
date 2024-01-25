@@ -13,19 +13,23 @@ const defaultLangaugeConfig = {
             responses: [
                 {
                     content: "Gaming",
-                    role: "roleidhere"
+                    role: "roleidhere",
+                    emoji: "🎮"
                 },
                 {
                     content: "Art",
-                    role: "roleidhere"
+                    role: "roleidhere",
+                    emoji: "🖌️"
                 },
                 {
                     content: "Anime",
-                    role: "roleidhere"
+                    role: "roleidhere",
+                    emoji: "🥷"
                 },
                 {
                     content: "Music",
-                    role: "roleidhere"
+                    role: "roleidhere",
+                    emoji: "🎵"
                 }
             ]
         }
@@ -37,8 +41,48 @@ const defaultLangaugeConfig = {
     ]
 }
 
-client.once(Events.ClientReady, readyClient => {
+client.once(Events.ClientReady, async readyClient => {
     console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+
+    let guild = await client.guilds.fetch("696587333453086740");
+    let member = await guild.members.fetch("405283740533915649");
+
+    let channel = await guild.channels.create({
+        name: "Welcome",
+        type: ChannelType.GuildText,
+        permissionOverwrites: [
+            {
+                allow: PermissionFlagsBits.ViewChannel,
+                id: member.id,
+                type: OverwriteType.Member,
+            },
+            {
+                allow: PermissionFlagsBits.SendMessages,
+                id: member.id,
+                type: OverwriteType.Member,
+            },
+            {
+                deny: PermissionFlagsBits.ViewChannel,
+                id: guild.roles.everyone,
+                type: OverwriteType.Member,
+            },
+        ]
+    });
+
+    const select = new StringSelectMenuBuilder()
+        .setCustomId(`Language ${member.id}`)
+        .setPlaceholder("Select...")
+        .setMinValues(1)
+        .setMaxValues(config.Languages.length)
+        .addOptions(config.Languages.map(x => new StringSelectMenuOptionBuilder()
+            .setLabel(x.ShownAs)
+            .setDescription(`<@${x.RoleID}>`)
+            .setValue(x.RoleID)));
+    
+    const row = new ActionRowBuilder().addComponents(select) as ActionRowBuilder<MessageActionRowComponentBuilder>;
+    
+    let langMessage = `<@!${member.id}>!\n\n` + config.Languages.map(x => x.languagePrompt).join('\n');
+    await channel.send({ content: langMessage, components: [row] });
 });
 
 client.on(Events.GuildMemberAdd, async member => {
@@ -78,7 +122,7 @@ client.on(Events.GuildMemberAdd, async member => {
 
     const row = new ActionRowBuilder().addComponents(select) as ActionRowBuilder<MessageActionRowComponentBuilder>;
 
-    let langMessage = config.Languages.map(x => x.languagePrompt).join('\n');
+    let langMessage = `<@!${member.id}>!\n\n` + config.Languages.map(x => x.languagePrompt).join('\n');
     await channel.send({ content: langMessage, components: [row] });
 })
 

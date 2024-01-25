@@ -12,4 +12,5 @@ interface BotInteraction {
 interface BotResponse {
     content: string;
     role: string;
+    emoji?: string;
 }
