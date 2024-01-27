@@ -27,7 +27,9 @@ export async function onButtonPress(interact: ButtonInteraction) {
         guildUser.roles.add(config.prisonRole);
     }
 
-    await interact.update("👍");
+    await interact.update({content: "🤗", components: []});
+
+    setTimeout(async () => await interact.channel?.delete(), 3000);
 }
 
 async function nextInteraction(customId: string, message: Message<boolean>, guildUser: GuildMember) {

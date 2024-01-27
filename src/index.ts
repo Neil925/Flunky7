@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { ActionRowBuilder, ChannelType, Client, ComponentType, Events, GatewayIntentBits, InteractionType, MessageActionRowComponentBuilder, OverwriteType, PermissionFlagsBits, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
+import { ActionRowBuilder, ChannelType, Client, ComponentType, Events, GatewayIntentBits, Guild, GuildMember, InteractionType, MessageActionRowComponentBuilder, OverwriteType, PermissionFlagsBits, PermissionsBitField, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
 import config from '../configs/config.json' with { type: "json" };
 import { onButtonPress, onStringSelect } from './interact.js';
 
@@ -41,90 +41,9 @@ const defaultLangaugeConfig = {
     ]
 }
 
-client.once(Events.ClientReady, async readyClient => {
-    console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+client.once(Events.ClientReady, readyClient => console.log(`Ready! Logged in as ${readyClient.user.tag}`));
 
-    let guild = await client.guilds.fetch("696587333453086740");
-    let member = await guild.members.fetch("405283740533915649");
-
-    let channel = await guild.channels.create({
-        name: "Welcome",
-        type: ChannelType.GuildText,
-        permissionOverwrites: [
-            {
-                allow: PermissionFlagsBits.ViewChannel,
-                id: member.id,
-                type: OverwriteType.Member,
-            },
-            {
-                allow: PermissionFlagsBits.SendMessages,
-                id: member.id,
-                type: OverwriteType.Member,
-            },
-            {
-                deny: PermissionFlagsBits.ViewChannel,
-                id: guild.roles.everyone,
-                type: OverwriteType.Member,
-            },
-        ]
-    });
-
-    const select = new StringSelectMenuBuilder()
-        .setCustomId(`Language ${member.id}`)
-        .setPlaceholder("Select...")
-        .setMinValues(1)
-        .setMaxValues(config.Languages.length)
-        .addOptions(config.Languages.map(x => new StringSelectMenuOptionBuilder()
-            .setLabel(x.ShownAs)
-            .setDescription(`<@${x.RoleID}>`)
-            .setValue(x.RoleID)));
-    
-    const row = new ActionRowBuilder().addComponents(select) as ActionRowBuilder<MessageActionRowComponentBuilder>;
-    
-    let langMessage = `<@!${member.id}>!\n\n` + config.Languages.map(x => x.languagePrompt).join('\n');
-    await channel.send({ content: langMessage, components: [row] });
-});
-
-client.on(Events.GuildMemberAdd, async member => {
-    let guild = member.guild;
-
-    let channel = await guild.channels.create({
-        name: "Welcome!",
-        type: ChannelType.GuildText,
-        permissionOverwrites: [
-            {
-                allow: PermissionFlagsBits.ViewChannel,
-                id: member.id,
-                type: OverwriteType.Member,
-            },
-            {
-                allow: PermissionFlagsBits.SendMessages,
-                id: member.id,
-                type: OverwriteType.Member,
-            },
-            {
-                deny: PermissionFlagsBits.ViewChannel,
-                id: guild.roles.everyone,
-                type: OverwriteType.Member,
-            },
-        ]
-    });
-
-    const select = new StringSelectMenuBuilder()
-        .setCustomId(`Language ${member.id}`)
-        .setPlaceholder("Select...")
-        .setMinValues(1)
-        .setMaxValues(config.Languages.length)
-        .addOptions(config.Languages.map(x => new StringSelectMenuOptionBuilder()
-            .setLabel(x.ShownAs)
-            .setDescription(`<@${x.RoleID}>`)
-            .setValue(x.RoleID)));
-
-    const row = new ActionRowBuilder().addComponents(select) as ActionRowBuilder<MessageActionRowComponentBuilder>;
-
-    let langMessage = `<@!${member.id}>!\n\n` + config.Languages.map(x => x.languagePrompt).join('\n');
-    await channel.send({ content: langMessage, components: [row] });
-})
+client.on(Events.GuildMemberAdd, async member => await welcomeMessage(member.guild, member));
 
 client.on(Events.InteractionCreate, async interact => {
     if (interact.type != InteractionType.MessageComponent)
@@ -136,6 +55,47 @@ client.on(Events.InteractionCreate, async interact => {
     else if (interact.componentType == ComponentType.Button)
         await onButtonPress(interact);
 });
+
+async function welcomeMessage(guild: Guild, member: GuildMember) {
+    let allows = new PermissionsBitField(PermissionFlagsBits.ViewChannel).add(PermissionFlagsBits.SendMessages);
+
+    let channel = await guild.channels.create({
+        name: "Welcome",
+        type: ChannelType.GuildText,
+        permissionOverwrites: [
+            {
+                allow: allows,
+                id: client.user!.id,
+                type: OverwriteType.Member,
+            },
+            {
+                allow: allows,
+                id: member.id,
+                type: OverwriteType.Member,
+            },
+            {
+                deny: PermissionFlagsBits.ViewChannel,
+                id: guild.roles.everyone,
+                type: OverwriteType.Member,
+            },
+        ]
+    });
+
+    const select = new StringSelectMenuBuilder()
+        .setCustomId(`Language ${member.id}`)
+        .setPlaceholder("Select...")
+        .setMinValues(1)
+        .setMaxValues(config.Languages.length)
+        .addOptions(config.Languages.map(x => new StringSelectMenuOptionBuilder()
+            .setLabel(x.ShownAs)
+            .setDescription(`<@${x.RoleID}>`)
+            .setValue(x.RoleID)));
+
+    const row = new ActionRowBuilder().addComponents(select) as ActionRowBuilder<MessageActionRowComponentBuilder>;
+
+    let langMessage = `<@!${member.id}>!\n\n` + config.Languages.map(x => x.languagePrompt).join('\n');
+    await channel.send({ content: langMessage, components: [row] });
+}
 
 for (const language of config.Languages) {
     if (!fs.existsSync(`configs/${language.Name}-config.json`))
