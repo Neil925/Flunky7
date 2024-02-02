@@ -14,3 +14,7 @@ interface BotResponse {
     role: string;
     emoji?: string;
 }
+
+interface Command {
+    action: (message: Discord.Message) => { } 
+}

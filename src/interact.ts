@@ -19,9 +19,10 @@ export async function onButtonPress(interact: ButtonInteraction) {
         return;
 
     let guildUser = await interact.guild.members.fetch(interact.user);
+    let greatestRole = (await interact.guild.members.fetchMe()).roles.highest;
 
     if (interact.customId == "reject") {
-        for (const role of guildUser.roles.cache)
+        for (const role of guildUser.roles.cache.filter(x => x.position > greatestRole.position))
             await guildUser.roles.remove(role);
 
         guildUser.roles.add(config.prisonRole);
@@ -32,6 +33,10 @@ export async function onButtonPress(interact: ButtonInteraction) {
     setTimeout(async () => await interact.channel?.delete(), 3000);
 }
 
+//First run around: Language <userid>
+//After           : 0 <userid>
+//Afer            : 1 <userid>
+//Afer            : Rules <userid>
 async function nextInteraction(customId: string, message: Message<boolean>, guildUser: GuildMember) {
     let interactionNum = 0;
 

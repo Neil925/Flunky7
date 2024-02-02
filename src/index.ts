@@ -41,7 +41,11 @@ const defaultLangaugeConfig = {
     ]
 }
 
-client.once(Events.ClientReady, readyClient => console.log(`Ready! Logged in as ${readyClient.user.tag}`));
+client.once(Events.ClientReady, async readyClient => {
+    console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+    let guild = await client.guilds.fetch("696587333453086740");
+    await welcomeMessage(guild, await guild.members.fetch("822194918432833546"));
+});
 
 client.on(Events.GuildMemberAdd, async member => await welcomeMessage(member.guild, member));
 
