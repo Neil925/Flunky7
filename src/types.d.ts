@@ -15,6 +15,12 @@ interface BotResponse {
     emoji?: string;
 }
 
-interface Command {
+interface CommandInterface {
     action: (message: Discord.Message) => { } 
+}
+
+interface InteractionInterface {
+    interactionType: InteractionType;
+    componentTeype: ComponentType;
+    public async action(interact: Interaction);
 }

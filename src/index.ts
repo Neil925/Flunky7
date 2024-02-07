@@ -1,50 +1,15 @@
 import fs from 'fs';
-import { ActionRowBuilder, ChannelType, Client, ComponentType, Events, GatewayIntentBits, Guild, GuildMember, InteractionType, MessageActionRowComponentBuilder, OverwriteType, PermissionFlagsBits, PermissionsBitField, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
+import { ActionRowBuilder, ChannelType, Client, ComponentType, Events, GatewayIntentBits, Guild, GuildMember, InteractionType, MessageActionRowComponentBuilder, OverwriteType, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 import config from '../configs/config.json' with { type: "json" };
 import { onButtonPress, onStringSelect } from './interact.js';
+import { createStringMenu, defaultLangaugeConfig } from './helpers.js';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
-const defaultLangaugeConfig = {
-    languagePrompt: "<Please select your langauges.>",
-    selectionPlaceHolder: "<Make a selection...>",
-    interactions: [
-        {
-            prompt: "<What are your interests?>",
-            responses: [
-                {
-                    content: "Gaming",
-                    role: "roleidhere",
-                    emoji: "🎮"
-                },
-                {
-                    content: "Art",
-                    role: "roleidhere",
-                    emoji: "🖌️"
-                },
-                {
-                    content: "Anime",
-                    role: "roleidhere",
-                    emoji: "🥷"
-                },
-                {
-                    content: "Music",
-                    role: "roleidhere",
-                    emoji: "🎵"
-                }
-            ]
-        }
-    ],
-    rules: [
-        "Rule #1: Flunky7 is the best bot.",
-        "Rule #2: You must praise Flunky7.",
-        "Rule #3: Flunky7 will hunt down those who speak back.",
-    ]
-}
 
 client.once(Events.ClientReady, async readyClient => {
     console.log(`Ready! Logged in as ${readyClient.user.tag}`);
-    let guild = await client.guilds.fetch("696587333453086740");
-    await welcomeMessage(guild, await guild.members.fetch("822194918432833546"));
+    let guild = await client.guilds.fetch("1204145479290462320");
+    await welcomeMessage(guild, await guild.members.fetch("405283740533915649"));
 });
 
 client.on(Events.GuildMemberAdd, async member => await welcomeMessage(member.guild, member));
@@ -85,19 +50,12 @@ async function welcomeMessage(guild: Guild, member: GuildMember) {
         ]
     });
 
-    const select = new StringSelectMenuBuilder()
-        .setCustomId(`Language ${member.id}`)
-        .setPlaceholder("Select...")
-        .setMinValues(1)
-        .setMaxValues(config.Languages.length)
-        .addOptions(config.Languages.map(x => new StringSelectMenuOptionBuilder()
-            .setLabel(x.ShownAs)
-            .setDescription(`<@${x.RoleID}>`)
-            .setValue(x.RoleID)));
+    const options: BotResponse[] = config.Languages.map(x => { return { content: x.ShownAs, role: x.RoleID, emoji: x.Emoji } });
+    const select = createStringMenu(`Language ${member.id}`, 1, config.Languages.length, options);
 
     const row = new ActionRowBuilder().addComponents(select) as ActionRowBuilder<MessageActionRowComponentBuilder>;
 
-    let langMessage = `<@!${member.id}>!\n\n` + config.Languages.map(x => x.languagePrompt).join('\n');
+    let langMessage = `<@!${member.id}>!\n\n ${config.Languages.map(x => x.languagePrompt).join('\n')}`;
     await channel.send({ content: langMessage, components: [row] });
 }
 
