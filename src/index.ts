@@ -2,7 +2,7 @@ import fs from 'fs';
 import { ActionRowBuilder, ChannelType, Client, ComponentType, Events, GatewayIntentBits, Guild, GuildMember, InteractionType, MessageActionRowComponentBuilder, OverwriteType, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
 import config from '../configs/config.json' with { type: "json" };
 import { onButtonPress, onStringSelect } from './interact.js';
-import { createStringMenu, defaultLangaugeConfig } from './helpers.js';
+import { createStringMenu, defaultLangaugeConfig, loadLanguageConfigs } from './helpers.js';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
 
@@ -18,7 +18,6 @@ client.on(Events.InteractionCreate, async interact => {
     if (interact.type != InteractionType.MessageComponent)
         return;
 
-    //if langauge
     if (interact.componentType == ComponentType.StringSelect)
         await onStringSelect(interact);
     else if (interact.componentType == ComponentType.Button)
@@ -59,10 +58,7 @@ async function welcomeMessage(guild: Guild, member: GuildMember) {
     await channel.send({ content: langMessage, components: [row] });
 }
 
-for (const language of config.Languages) {
-    if (!fs.existsSync(`configs/${language.Name}-config.json`))
-        fs.writeFileSync(`configs/${language.Name}-config.json`, JSON.stringify(defaultLangaugeConfig), { flag: 'w' });
-}
+loadLanguageConfigs();
 
 // Log in to Discord with your client's token
 client.login(config.token);

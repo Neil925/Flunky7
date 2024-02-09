@@ -16,11 +16,30 @@ interface BotResponse {
 }
 
 interface CommandInterface {
-    action: (message: Discord.Message) => { } 
+    public async action: (message: Discord.Message) => { } 
 }
 
 interface InteractionInterface {
     interactionType: InteractionType;
     componentTeype: ComponentType;
     public async action(interact: Interaction);
+}
+
+interface ongoingData {
+    type: ongoingType;
+    customIndex: number;
+    addRoles?: String[];
+    removeRoles?: String[];
+}
+
+enum ongoingType {
+    language,
+    secondaryLanguage,
+    custom,
+    rules
+}
+
+interface ongoing {
+    userId: string;
+    data: ongoingData;
 }
