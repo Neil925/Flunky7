@@ -20,26 +20,26 @@ interface CommandInterface {
 }
 
 interface InteractionInterface {
-    interactionType: InteractionType;
-    componentTeype: ComponentType;
+    customId: string;
+    componentType: ComponentType;
     public async action(interact: Interaction);
 }
 
-interface ongoingData {
-    type: ongoingType;
+interface transactionData {
+    type: transactionPhase;
     customIndex: number;
-    addRoles?: String[];
-    removeRoles?: String[];
+    addRoles: string[];
+    removeRoles: string[];
 }
 
-enum ongoingType {
+enum transactionPhase {
     language,
     secondaryLanguage,
     custom,
     rules
 }
 
-interface ongoing {
+interface roleTransaction {
     userId: string;
-    data: ongoingData;
+    data: transactionData;
 }

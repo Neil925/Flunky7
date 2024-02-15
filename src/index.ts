@@ -1,64 +1,45 @@
-import fs from 'fs';
-import { ActionRowBuilder, ChannelType, Client, ComponentType, Events, GatewayIntentBits, Guild, GuildMember, InteractionType, MessageActionRowComponentBuilder, OverwriteType, PermissionFlagsBits, PermissionsBitField } from 'discord.js';
+import { Client, ComponentType, Events, GatewayIntentBits, InteractionType } from 'discord.js';
 import config from '../configs/config.json' with { type: "json" };
-import { onButtonPress, onStringSelect } from './interact.js';
-import { createStringMenu, defaultLangaugeConfig, loadLanguageConfigs } from './helpers.js';
+import { loadLanguageConfigs } from './helpers.js';
+import RoleTransactionHandler from './roleTransactionHandler.js';
+import fs from 'fs';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers] });
+export const transactionHandler = new RoleTransactionHandler();
 
 client.once(Events.ClientReady, async readyClient => {
     console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+
     let guild = await client.guilds.fetch("1204145479290462320");
-    await welcomeMessage(guild, await guild.members.fetch("405283740533915649"));
+    await RoleTransactionHandler.initiate(client, guild, await guild.members.fetch("405283740533915649"));
 });
 
-client.on(Events.GuildMemberAdd, async member => await welcomeMessage(member.guild, member));
+client.on(Events.GuildMemberAdd, async member => await RoleTransactionHandler.initiate(client, member.guild, member));
 
-client.on(Events.InteractionCreate, async interact => {
-    if (interact.type != InteractionType.MessageComponent)
-        return;
+import base from "./componentInteraction/base.js";
+const baseFile = "base.ts";
+import path from 'path';
 
-    if (interact.componentType == ComponentType.StringSelect)
-        await onStringSelect(interact);
-    else if (interact.componentType == ComponentType.Button)
-        await onButtonPress(interact);
-});
+let basedir = import.meta.filename;
+basedir = basedir.substring(0, basedir.lastIndexOf('/'));
 
-async function welcomeMessage(guild: Guild, member: GuildMember) {
-    let allows = new PermissionsBitField(PermissionFlagsBits.ViewChannel).add(PermissionFlagsBits.SendMessages);
+console.debug(basedir);
 
-    let channel = await guild.channels.create({
-        name: "Welcome",
-        type: ChannelType.GuildText,
-        permissionOverwrites: [
-            {
-                allow: allows,
-                id: client.user!.id,
-                type: OverwriteType.Member,
-            },
-            {
-                allow: allows,
-                id: member.id,
-                type: OverwriteType.Member,
-            },
-            {
-                deny: PermissionFlagsBits.ViewChannel,
-                id: guild.roles.everyone,
-                type: OverwriteType.Member,
-            },
-        ]
-    });
-
-    const options: BotResponse[] = config.Languages.map(x => { return { content: x.ShownAs, role: x.RoleID, emoji: x.Emoji } });
-    const select = createStringMenu(`Language ${member.id}`, 1, config.Languages.length, options);
-
-    const row = new ActionRowBuilder().addComponents(select) as ActionRowBuilder<MessageActionRowComponentBuilder>;
-
-    let langMessage = `<@!${member.id}>!\n\n ${config.Languages.map(x => x.languagePrompt).join('\n')}`;
-    await channel.send({ content: langMessage, components: [row] });
+const readCommands = (dir: string) => {
+    const files = fs.readdirSync(path.join(basedir, dir));
+    for (const file of files) {
+        const stat = fs.lstatSync(path.join(basedir, dir, file));
+        if (stat.isDirectory()) {
+            readCommands(path.join(dir, file));
+        } else if (file !== baseFile) {
+            const option = require(path.join(basedir, dir, file));
+            base(client, option);
+        }
+    }
 }
+
+readCommands('componentInteraction');
 
 loadLanguageConfigs();
 
-// Log in to Discord with your client's token
 client.login(config.token);
